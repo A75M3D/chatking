@@ -1,0 +1,7 @@
+{
+  "name": "Ephemeral Chat",
+  "description": "A stylish and secure chat application with text messaging, voice recordings, and audio/video call capabilities. All messages automatically disappear after 24 hours. Integrated with Supabase for backend services and enhanced with Gemini for smart reply suggestions.",
+  "requestFramePermissions": [
+    "microphone"
+  ]
+}
