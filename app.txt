@@ -1,0 +1,47 @@
+import React, { useState, useEffect } from 'react';
+import { Session } from '@supabase/supabase-js';
+import { supabase } from './services/supabase';
+import Auth from './components/Auth';
+import ChatLayout from './components/ChatLayout';
+import { useTheme } from './hooks/useTheme';
+
+const App: React.FC = () => {
+  const [session, setSession] = useState<Session | null>(null);
+  const [loading, setLoading] = useState(true);
+  const { theme, toggleTheme } = useTheme();
+
+  useEffect(() => {
+    supabase.auth.getSession().then(({ data: { session } }) => {
+      setSession(session);
+      setLoading(false);
+    });
+
+    const {
+      data: { subscription },
+    } = supabase.auth.onAuthStateChange((_event, session) => {
+      setSession(session);
+    });
+
+    return () => subscription.unsubscribe();
+  }, []);
+
+  if (loading) {
+    return (
+      <div className="flex items-center justify-center h-screen bg-gray-100 dark:bg-gray-900">
+        <div className="w-16 h-16 border-4 border-primary-500 border-dashed rounded-full animate-spin"></div>
+      </div>
+    );
+  }
+
+  return (
+    <div className="min-h-screen font-sans">
+      {!session ? (
+        <Auth />
+      ) : (
+        <ChatLayout key={session.user.id} session={session} theme={theme} toggleTheme={toggleTheme} />
+      )}
+    </div>
+  );
+};
+
+export default App;
